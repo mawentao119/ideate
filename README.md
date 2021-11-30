@@ -31,5 +31,7 @@ Then the testcase is just keywords and parameters.
   而resource接口，针对上面的异常，会进行自己的处理，如判断是否存在，是否符合要求，是否删除重建，是否可以用sudo权限进行操作处理，目的是尽量实现一个用户存在的状态。
   这对测试用例的稳定性会有很大的提升
   
-  useradd 命令的封装放在 base 的lib中，而创建用户的操作可以封装在 lib-resource 中。如果需要创建不同要求的用户，可以封装在Servcie的resource中
+  useradd 命令的封装放在 base 的lib中，而创建用户的操作可以封装在 base-resource 中。如果需要创建不同要求的用户，可以封装在Servcie的resource中
 
+#### 通用的配置文件目录
+- export IDEATE_DIR="~/ideate"

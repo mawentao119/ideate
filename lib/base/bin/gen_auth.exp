@@ -1,0 +1,40 @@
+#!/bin/bash
+
+## expect gen_auth.exp $ip $user $password $home
+
+set ip [lindex $argv 0]
+set user [lindex $argv 1]
+set password [lindex $argv 2]
+set home [lindex $argv 3]
+
+puts "*** *** Will Gen auth IP:$ip USER:$user PASS:$password HOME_DIR:$home"
+
+    spawn ssh $user@$ip "rm -rf $home/.ssh/ && ssh-keygen -t rsa"
+    expect {
+        "*yes/no" {
+            send "yes\r"
+            exp_continue
+        }
+        "*assword" {
+            send "$password\r"
+            exp_continue
+        }
+        "*file in which to save the key*" {
+            send "\n\r"
+            send_user "$home/.ssh\r"
+            exp_continue
+        }
+        "*Enter passphrase*" {
+            send "\n\r"
+            exp_continue
+        }
+        "*Enter same passphrase again*" {
+            send "\n\r"
+            exp_continue
+        }
+        "*ermission denied*" {
+            send "$password\r"
+            exp_continue
+        }
+    }
+

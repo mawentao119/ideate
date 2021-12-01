@@ -1,0 +1,37 @@
+#!/bin/bash
+##!/usr/bin/expect
+
+## use by root 
+## expect scp_auth.exp $ip $user $password $home 
+
+set ip [lindex $argv 0]
+set user [lindex $argv 1]
+set password [lindex $argv 2]
+set home [lindex $argv 3]
+set currdir [exec pwd]
+
+puts "*** *** Will SCP auth to IP:$ip USER:$user PASS:$password HOME_DIR:$home"
+
+    spawn scp -r $currdir/authorized_keys $user@$ip:$home/.ssh/
+    expect {
+        "*yes/no" {
+            send "yes\r"
+            exp_continue
+        }
+        "*assword" {
+            send "$password\r"
+            exp_continue
+        }
+    }
+    
+    spawn ssh $user@$ip "chmod 0600 $home/.ssh/authorized_keys "
+    expect {
+        "*yes/no" {
+            send "yes\r"
+            exp_continue
+        }
+        "*assword" {
+            send "$password\r"
+            exp_continue
+        }
+    }

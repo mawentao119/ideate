@@ -1,0 +1,40 @@
+#!/bin/bash
+
+## use by root 
+## expect gen_user.exp $username $password $homedir $group
+
+set ip [lindex $argv 0]
+set username [lindex $argv 1]
+set password [lindex $argv 2]
+set homedir [lindex $argv 3]
+set group [lindex $argv 4]
+set currdir [exec pwd]
+
+puts "*** Create user:$username ip:$ip ***"
+
+    spawn ssh root@$ip "useradd -d $homedir -m -g $group $username "
+    expect {
+        "*yes/no" {
+            send "yes\r"
+            exp_continue
+        }
+    }
+
+puts "*** Set Password:$username ip:$ip ***"
+
+    spawn ssh root@$ip "passwd $username"
+    expect {
+        "*ew password:" {
+            send "$password\r"
+            exp_continue
+        }
+        "*AD PASSWORD:*" {
+            puts " >>> Password is too simple: $password <<< "
+            exit
+        }
+        "*successfully." {
+            puts " >>> Set Password Success !!!  <<< "
+            exit
+        }
+    }
+

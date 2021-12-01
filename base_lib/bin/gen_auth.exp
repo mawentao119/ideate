@@ -6,7 +6,6 @@ set ip [lindex $argv 0]
 set user [lindex $argv 1]
 set password [lindex $argv 2]
 set home [lindex $argv 3]
-set currdir [exec pwd]
 
 puts "*** *** Will Gen auth IP:$ip USER:$user PASS:$password HOME_DIR:$home"
 

@@ -4,21 +4,22 @@
 ## return OK :  ip_addr  ret:0
 ## return Err:  "GetIpErr"  ret:1
 
-rm -rf temp.ip
+temp="$IDEATE_DIR/temp_dir/temp.ip"
+rm -rf $temp
 
-ifconfig eth1 > temp.ip
+ifconfig eth1 > $temp
 
 if [ $? -eq 0 ]; then
-   ip=`cat temp.ip |grep 'inet'| grep -v 'inet6' |awk '{print $2}' `
+   ip=`cat $temp |grep 'inet'| grep -v 'inet6' |awk '{print $2}' `
    if [ ! $ip == "" ]; then
         echo $ip
         exit 0
    fi
 
 else
-   ifconfig eth0 > temp.ip
+   ifconfig eth0 > $temp
    if [ $? -eq 0 ]; then
-       ip=`cat temp.ip |grep 'inet'| grep -v 'inet6' |awk '{print $2}' `
+       ip=`cat $temp |grep 'inet'| grep -v 'inet6' |awk '{print $2}' `
        if [ ! $ip == "" ]; then
            echo $ip
            exit 0
@@ -27,9 +28,9 @@ else
 
 fi
 
-echo "GetIpErr"
+echo "error"
 
-rm -rf temp.ip
+rm -rf $temp
 
 exit 1 
 

@@ -1,16 +1,21 @@
-echo "   "
-echo "** USAGE: $0 ** "
-echo "** Using hosts.txt, each line with '1.2.3.4 user password /home/user' formate. Can Run repeately. **"
-echo "   "
+#!/bin/bash
+
+USAGE(){
+    echo "** USAGE: $0 ** "
+    echo "** Using hosts.txt, each line with '1.2.3.4 user password /home/user' formate. Can Run repeately. **"
+    echo "   "
+}
 
 sleep 2
 
-if [ ! -f "hosts.txt" ]; then
-    echo "* ERROR: Cannot find hosts.txt file , please create it. *"
+hosts="$IDEATE_DIR/conf/machine/hosts.txt"
+currdir="$IDEATE_DIR/temp_dir"
+
+if [ ! -f "$hosts" ]; then
+    echo "* ERROR: Cannot find $hosts , please create it. *"
+    USAGE
     exit 1
 fi
-
-currdir=`pwd`
 
 rm -rf $currdir/ssh_out
 rm -rf $currdir/authorized_keys
@@ -26,7 +31,7 @@ do
     
     }
 
-done < "hosts.txt"
+done < $hosts
 
 if [ ! -f "~/.ssh/id_rsa.pub" ];then
     ssh-keygen -P "" -f ~/.ssh/id_rsa
@@ -50,7 +55,7 @@ do
     
     }
 
-done < "hosts.txt"
+done < $hosts
 
 rm -rf $currdir/ssh_out
 rm -rf $currdir/authorized_keys

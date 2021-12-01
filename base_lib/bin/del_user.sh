@@ -1,37 +1,62 @@
-echo "   "
-echo "** USAGE: $0 username "
-echo "** Using hosts.txt as hosts file **"
-echo "   "
+#!/bin/bash
 
-if [ $# != 1 ]; then
-    echo "** ERROR: Parameter error , need username "
-    echo "** USAGE: $0 username "
+USAGE(){
+    echo "   "
+    echo "** USAGE: $0 username [sudo]"
+    echo "** Using hosts.txt as hosts file **"
+    echo "   "
+}
+
+if [ $# == 0 ]; then
+    echo "====  ERROR: Parameter Error ==== "
+    USAGE
     exit 1
 fi
 
-username=$1
+hostfile="$IDEATE_DIR/conf/machine/hosts.txt"
+if [ ! -f "$hostfile" ];then
+    echo "==== ERROR: cannot find file:$hostfile ===="
+    exit 1
+fi
+
 operator=`whoami`
+if [ $# == 1 ]; then
+    username=$1
+    if [ ! $operator == "root" ]; then
+        echo "==== ERROR : operator should be root OR add sudo parameter ==== "
+        exit 1
+    fi
 
-if [ ! $operator == "root" ]; then
-    echo "** ERROR : operator should be root ! "
-    exit 1
+    while read line
+    do
+        echo $line | awk '{ print $1,$2,$3,$4 }' | { 
+        read ip user password homedir ;
+        echo "* Delete user ip: $ip user: $username "
+        ssh ${operator}@${ip} "userdel $username -r "
+        sleep 1 
+        }
+    done < $hostfile
+    exit 0
 fi
 
-if [ ! -f "hosts.txt" ]; then
-    echo "** ERROR : need file hosts.txt !"
-    exit 1
+if [ $# == 2 ]; then
+    username=$1
+    if [ $2 == "sudo" ];then
+        while read line
+        do
+            echo $line | awk '{ print $1,$2,$3,$4 }' | {
+            read ip user password homedir ;
+            echo "* Delete user ip: $ip user: $username "
+            ssh ${operator}@${ip} "sudo userdel $username -r "
+            sleep 1 
+            }
+        done < $hostfile
+        exit 0
+    else
+        echo "====  ERROR: Parameter Error ==== "
+        USAGE
+        exit 1
+    fi
 fi
 
-while read line
-do
-    echo $line | awk '{ print $1,$2,$3,$4 }' | { 
-    read ip user password homedir ;
-    echo "* Delete user ip: $ip user: $username "
-    ssh root@$ip "userdel $username -r "
-    sleep 1 
-    }
-
-done < "hosts.txt"
-
-echo "*** Finished ***"
-
+exit 1

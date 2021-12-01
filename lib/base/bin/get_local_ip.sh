@@ -2,7 +2,7 @@
 
 ## get local ip ,eth1 first , then eth0
 ## return OK :  ip_addr  ret:0
-## return Err:  "GetIpErr"  ret:1
+## return Err:  "error"  ret:1
 
 temp="$IDEATE_DIR/temp_dir/temp.ip"
 rm -rf $temp
@@ -28,6 +28,7 @@ else
 
 fi
 
+# "error" is the interface return, maybe used in resource file
 echo "error"
 
 rm -rf $temp

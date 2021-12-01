@@ -16,4 +16,3 @@ Get local ip
     ${ip}=   Get local ip
     [Return]   ${ip}
  
-
